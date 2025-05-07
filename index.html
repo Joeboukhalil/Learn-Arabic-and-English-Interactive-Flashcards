@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Language Flashcards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: #f0f0f0;
+    }
+
+    #languageSelect {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    #flashcard {
+      width: 300px;
+      height: 200px;
+      margin: auto;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Language Flashcards</h2>
+
+  <select id="languageSelect">
+    <option value="ar">Learn Arabic</option>
+    <option value="en">Learn English</option>
+  </select>
+
+  <div id="flashcard" onclick="flipCard()">
+    <div class="card-inner">
+      <div class="card-front" id="cardFront"></div>
+      <div class="card-back" id="cardBack"></div>
+    </div>
+  </div>
+
+  <button onclick="nextCard()">Next Word</button>
+
+<script>
+  const words = [
+    { en: "Hello", ar: "مرحبا" },
+    { en: "Cat", ar: "قطة" },
+    { en: "Book", ar: "كتاب" },
+    { en: "Sun", ar: "شمس" },
+    { en: "Moon", ar: "قمر" },
+    { en: "planet", ar: "كوكب"},
+    { en: "Star", ar: "نجمة" },
+    { en: "Dog", ar: "كلب" },
+    { en: "Frog", ar: "ضفدع" },
+    { en: "Ambrella", ar: "مظلة" },
+    { en: "Forget", ar: "ينسى" },
+    { en: "Play", ar: "يلعب" },
+    { en: "Fork", ar: "شوكة" },
+    { en: "Spoon", ar: "ملعقة" },
+    { en: "Knife", ar: "سكين" },
+    { en: "Plate", ar: "صحن" },
+    { en: "Bowl", ar: "وعاء" },
+    { en: "Twizers", ar: "ملقط" },
+    { en: "Scissors", ar: "مقص" },
+    { en: "Monkey", ar: "قرد" },
+    { en: "Worm", ar: "دودة" },
+    { en: "Carpet", ar: "سجادة" },
+    { en: "Playground", ar: "ملعب" },
+    { en: "Restaurant", ar: "مطعم" },
+    { en: "Friends", ar: "أصدقاء" },
+    { en: "Family", ar: "عائلة" },
+    { en: "Brother", ar: "أخ" },
+    { en: "Sister", ar: "أخت" },
+    { en: "Uncle", ar: "عم / خال" },
+    { en: "Aunt", ar: "عمة / خالة" },
+    { en: "Father", ar: "أب" },
+    { en: "Mother", ar: "أم" },
+    { en: "Nephew", ar: "ابن الأخ / ابن الأخت" },
+    { en: "Cousin", ar: "ابن/ابنة العم أو الخال" },
+    { en: "Tomato", ar: "طماطم" },
+    { en: "Cucumber", ar: "خيار" },
+    { en: "Potato", ar: "بطاطا" },
+    { en: "Cherry", ar: "كرز" },
+    { en: "Avocado", ar: "أفوكادو" },
+    { en: "Pineapple", ar: "أناناس" },
+    { en: "Apple", ar: "تفاحة" },
+    { en: "Fruits", ar: "فواكه" },
+    { en: "Vegetable", ar: "خضار" },
+    { en: "Candy", ar: "حلوى" },
+    { en: "Healthy", ar: "صحي" },
+    { en: "Diet", ar: "حمية" },
+    { en: "Airplane", ar: "طائرة" },
+    { en: "Boat", ar: "قارب" },
+    { en: "Car", ar: "سيارة" },
+    { en: "Excuse me", ar: "عذرًا" },
+    { en: "Sorry", ar: "آسف" },
+    { en: "Happy", ar: "سعيد" },
+    { en: "Heart", ar: "قلب" },
+    { en: "Brain", ar: "دماغ" },
+    { en: "House", ar: "منزل" },
+    { en: "Tree", ar: "شجرة" },
+    { en: "Water", ar: "ماء" },
+    { en: "Fire", ar: "نار" },
+    { en: "Mountain", ar: "جبل" },
+    { en: "River", ar: "نهر" },
+    { en: "Ocean", ar: "محيط" },
+    { en: "Sky", ar: "سماء" },
+    { en: "Cloud", ar: "سحابة" },
+    { en: "Rain", ar: "مطر" },
+    { en: "Snow", ar: "ثلج" },
+    { en: "Wind", ar: "رياح" },
+    { en: "Stone", ar: "حجر" },
+    { en: "Sand", ar: "رمل" },
+    { en: "Road", ar: "طريق" },
+    { en: "Bridge", ar: "جسر" },
+    { en: "School", ar: "مدرسة" },
+    { en: "Teacher", ar: "معلم" },
+    { en: "Student", ar: "طالب" },
+    { en: "Bookstore", ar: "مكتبة" },
+    { en: "Hospital", ar: "مستشفى" },
+    { en: "Doctor", ar: "طبيب" },
+    { en: "Nurse", ar: "ممرضة" },
+    { en: "Medicine", ar: "دواء" },
+    { en: "Chair", ar: "كرسي" },
+    { en: "Table", ar: "طاولة" },
+    { en: "Window", ar: "نافذة" },
+    { en: "Door", ar: "باب" },
+    { en: "Wall", ar: "جدار" },
+    { en: "Ceiling", ar: "سقف" },
+    { en: "Floor", ar: "أرضية" },
+    { en: "Light", ar: "ضوء" },
+    { en: "Dark", ar: "ظلام" },
+    { en: "Clock", ar: "ساعة" },
+    { en: "Mirror", ar: "مرآة" },
+    { en: "Bag", ar: "حقيبة" },
+    { en: "Phone", ar: "هاتف" },
+    { en: "Computer", ar: "حاسوب" },
+    { en: "Mouse", ar: "فأرة" },
+    { en: "Keyboard", ar: "لوحة مفاتيح" },
+    { en: "Television", ar: "تلفاز" },
+    { en: "Camera", ar: "كاميرا" },
+    { en: "Bottle", ar: "زجاجة" },
+    { en: "Glass", ar: "كوب" },
+    { en: "Cup", ar: "فنجان" },
+    { en: "Pen", ar: "قلم" },
+    { en: "Pencil", ar: "قلم رصاص" },
+    { en: "Paper", ar: "ورقة" },
+    { en: "Notebook", ar: "دفتر" },
+    { en: "Map", ar: "خريطة" },
+    { en: "Clothes", ar: "ملابس" },
+    { en: "Shirt", ar: "قميص" },
+    { en: "Pants", ar: "بنطال" },
+    { en: "Shoes", ar: "أحذية" },
+    { en: "Hat", ar: "قبعة" },
+    { en: "Socks", ar: "جوارب" },
+    { en: "Watch", ar: "ساعة يد" },
+    { en: "Ring", ar: "خاتم" },
+    { en: "Earrings", ar: "أقراط" },
+    { en: "Necklace", ar: "عقد" },
+    { en: "Bed", ar: "سرير" },
+    { en: "Pillow", ar: "وسادة" },
+    { en: "Blanket", ar: "بطانية" },
+    { en: "Towel", ar: "منشفة" },
+    { en: "Soap", ar: "صابون" },
+    { en: "Shampoo", ar: "شامبو" },
+    { en: "Toothbrush", ar: "فرشاة أسنان" },
+    { en: "Toothpaste", ar: "معجون أسنان" },
+    { en: "Toilet", ar: "مرحاض" },
+    { en: "Sink", ar: "مغسلة" },
+    { en: "Shower", ar: "دش" },
+    { en: "Breakfast", ar: "فطور" },
+    { en: "Lunch", ar: "غداء" },
+    { en: "Dinner", ar: "عشاء" },
+    { en: "Meat", ar: "لحم" },
+    { en: "Chicken", ar: "دجاج" },
+    { en: "Fish", ar: "سمك" },
+    { en: "Rice", ar: "أرز" },
+    { en: "Bread", ar: "خبز" },
+    { en: "Cheese", ar: "جبن" },
+    { en: "Milk", ar: "حليب" },
+    { en: "Juice", ar: "عصير" },
+    { en: "Coffee", ar: "قهوة" },
+    { en: "Tea", ar: "شاي" },
+    { en: "Sugar", ar: "سكر" },
+    { en: "Salt", ar: "ملح" },
+    { en: "Pepper", ar: "فلفل" },
+    { en: "Egg", ar: "بيضة" },
+    { en: "Butter", ar: "زبدة" },
+    { en: "Ice", ar: "ثلج" },
+    { en: "Zoo", ar: "حديقة الحيوان" },
+    { en: "Park", ar: "حديقة" },
+    { en: "Market", ar: "سوق" },
+    { en: "Mall", ar: "مركز تسوق" },
+    { en: "Cinema", ar: "سينما" },
+    { en: "Bank", ar: "بنك" },
+    { en: "Police", ar: "شرطة" },
+    { en: "Fireman", ar: "رجل إطفاء" },
+    { english: "Baby", arabic: "رضيع" }
+    // Add more words...
+  ];
+
+  let flipped = false;
+  let learnLang = 'ar'; // default
+  let currentWord;
+
+  const card = document.getElementById('flashcard');
+  const cardFront = document.getElementById('cardFront');
+  const cardBack = document.getElementById('cardBack');
+  const languageSelect = document.getElementById('languageSelect');
+
+  function getRandomWord() {
+    return words[Math.floor(Math.random() * words.length)];
+  }
+
+  function updateCard() {
+    currentWord = getRandomWord();
+    if (learnLang === 'ar') {
+      cardFront.textContent = currentWord.en;
+      cardBack.textContent = currentWord.ar;
+    } else {
+      cardFront.textContent = currentWord.ar;
+      cardBack.textContent = currentWord.en;
+    }
+  }
+
+  function flipCard() {
+    flipped = !flipped;
+    card.classList.toggle('flipped', flipped);
+  }
+
+  function nextCard() {
+    flipped = false;
+    card.classList.remove('flipped');
+    updateCard();
+  }
+
+  languageSelect.addEventListener('change', () => {
+    learnLang = languageSelect.value;
+    updateCard();
+  });
+
+  // Initial display
+  updateCard();
+</script>
